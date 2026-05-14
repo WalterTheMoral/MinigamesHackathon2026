@@ -40,7 +40,12 @@ DESCRIPTIONS = {
     3: "swap coins with the top half of players",
     4: "stops someones bid without them knowing",
     5: "forced to bet xx%",
-    6: "reduce time by xx%"
+    6: "reduce time by xx%",
+    7: "adds x coins to bet",
+    8: "doubles coins earned in round",
+    9: "halves your coins earned in round",
+    10: "grants 2 random buffs or debuffs",
+    11: "causes an enemy to use a debuff on themselves"
 }
 
 # =====================================================
