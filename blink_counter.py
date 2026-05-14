@@ -209,11 +209,11 @@ class BlinkCounter:
                 # Break loop if 'p' is pressed
                 if cv.waitKey(int(1000/fps)) & 0xFF == ord(' '):
                     print(self.blink_counter)
-                    return self.blink_counter
+                    return self.blink_counter, True
 
                 if time.time() - start_time > 15:
                     print(self.blink_counter)
-                    return self.blink_counter
+                    return self.blink_counter, True
 
             # Cleanup
             cap.release()
