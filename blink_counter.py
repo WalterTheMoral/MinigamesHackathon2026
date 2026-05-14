@@ -146,6 +146,7 @@ class BlinkCounter:
             IOError: If video file cannot be opened
             Exception: For other processing errors
         """
+        start_time = time.time()
         try:
             # Open video capture
             cap = cv.VideoCapture(self.video_path)
@@ -239,8 +240,7 @@ def get_camera():
 
     raise Exception("No working camera found")
 
-if __name__ == "__main__":
-    start_time = time.time()
+def blinking_detector():
     # Create blink counter with custom parameters
     blink_counter = BlinkCounter(
         video_path=get_camera(),
@@ -251,4 +251,8 @@ if __name__ == "__main__":
     )
     blink_counter.process_video()
 
+
+
+if __name__ == "__main__":
+    blinking_detector()
 
