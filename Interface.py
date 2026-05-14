@@ -1,6 +1,7 @@
 import pygame
 from Scenes import *
 import Space_bar
+import colour_detector
 
 pygame.init()
 
@@ -24,14 +25,15 @@ def get_password():
     return "321"
 
 def get_game():
-    return "space"
+    return "colour"
 
 def is_finished_waiting():
     return True
 
 game_scenes = {
     "None": Scene(screen),
-    "space": Space_bar.ClickSpeedTestScene(screen)
+    "space": Space_bar.ClickSpeedTestScene(screen),
+    "colour": colour_detector.colour_detector_scene(screen, "red")
 }
 
 while running:
