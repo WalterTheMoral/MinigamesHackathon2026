@@ -2,17 +2,20 @@ import pygame
 import time
 import random
 import os
+import glob
 
 pygame.init()
 
+# ---------------- SCREEN ----------------
 WIDTH, HEIGHT = 1400, 800
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
-pygame.display.set_caption("Rhythm Game - Final Polish")
+pygame.display.set_caption("Random Song Rhythm Game")
 
 clock = pygame.time.Clock()
 FONT = pygame.font.SysFont("Arial", 42, bold=True)
 BIG = pygame.font.SysFont("Arial", 90, bold=True)
 
+# ---------------- LANES ----------------
 LANES = 4
 lane_width = WIDTH // LANES
 hit_y = HEIGHT - 140
@@ -27,12 +30,16 @@ LANE_KEYS = {
 COLORS = [(255,80,80),(80,255,140),(80,180,255),(255,220,80)]
 ARROWS = ["←","↓","↑","→"]
 
-# ---------------- MUSIC ----------------
-MUSIC_FILE = "song.mp3"
+# ---------------- RANDOM SONG PICK ----------------
+SONG_FOLDER = "songs"
+songs = glob.glob(os.path.join(SONG_FOLDER, "*.mp3"))
 
-if not os.path.exists(MUSIC_FILE):
-    print("Missing song.mp3")
+if not songs:
+    print("No mp3 files found in /songs folder")
     exit()
+
+MUSIC_FILE = random.choice(songs)
+print("Now playing:", MUSIC_FILE)
 
 pygame.mixer.init()
 pygame.mixer.music.load(MUSIC_FILE)
@@ -79,16 +86,20 @@ final_return = None
 feedback = ""
 feedback_time = 0
 
+GAME_TIME = 30
 
 running = True
 
+# ---------------- MAIN LOOP ----------------
 while running:
+
     screen.fill((10,10,18))
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
 
+        # ---------------- INPUT ----------------
         if state == "PLAYING" and not game_over:
             if event.type == pygame.KEYDOWN:
                 if event.key in LANE_KEYS:
@@ -159,13 +170,11 @@ while running:
     # ---------------- TIMER ----------------
     elapsed = time.time() - game_start_time
 
-    if elapsed >= 30 and not game_over:
+    if elapsed >= GAME_TIME and not game_over:
         game_over = True
 
-        # 🎵 STOP MUSIC ON TIME UP (FIX YOU REQUESTED)
         pygame.mixer.music.stop()
 
-        # 📤 return value support
         final_return = (score, True)
 
     # ---------------- GAMEPLAY ----------------
@@ -203,23 +212,22 @@ while running:
             fb = BIG.render(feedback, True, (255,255,255))
             screen.blit(fb, (WIDTH//2 - 140, HEIGHT//2))
 
-    # ---------------- END SCREEN (HAPPIER) ----------------
+    # ---------------- END SCREEN ----------------
     else:
         title = BIG.render("GOOD RUN! 🎉", True, (255,255,255))
         score_text = FONT.render(f"Final Score: {score}", True, (255,255,255))
         streak_text = FONT.render(f"Max Streak: {max_streak}", True, (255,255,255))
-        msg = FONT.render("Nice rhythm control — try again for a higher score!", True, (200,200,200))
+        msg = FONT.render("Nice! Try again for a higher score!", True, (200,200,200))
 
-        screen.blit(title, (WIDTH//2 - 220, HEIGHT//2 - 160))
+        screen.blit(title, (WIDTH//2 - 240, HEIGHT//2 - 160))
         screen.blit(score_text, (WIDTH//2 - 240, HEIGHT//2 - 40))
         screen.blit(streak_text, (WIDTH//2 - 220, HEIGHT//2 + 20))
-        screen.blit(msg, (WIDTH//2 - 380, HEIGHT//2 + 90))
+        screen.blit(msg, (WIDTH//2 - 360, HEIGHT//2 + 90))
 
-        # return value visible in console
         if final_return:
             print("RESULT:", final_return)
 
     pygame.display.flip()
     clock.tick(60)
 
-pygame.quit()
+pygame.quit()   
