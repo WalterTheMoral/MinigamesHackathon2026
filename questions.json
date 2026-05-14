@@ -1,0 +1,17 @@
+[
+  {
+    "question": "Arie told he is 10m late, how late was he?",
+    "answers": ["10m", "45m", "75m", "95m"],
+    "correct": 2
+  },
+  {
+    "question": "What's Arie's grandchild name?",
+    "answers": ["Iris", "Thelma", "Bazel", "Naomi"],
+    "correct": 1
+  },
+  {
+    "question": "How many Hakathons were there (including this1)",
+    "answers": ["7", "5", "6", "4"],
+    "correct": 3
+  }
+]
