@@ -100,7 +100,7 @@ def colour_detector(colour):
 
         #print(f"{h_mean=}, {s_mean=}, {v_mean=}, Detected: {colour_ditected}")
         if(colour == colour_ditected):
-            return time.time() - starting_time
+            return time.time() - starting_time, False
 
 
     cap.release()
