@@ -4,6 +4,9 @@ import time
 
 
 def simon_game_minigame():
+    # We use a simple list to store the score so we can get it out of the class
+    final_score = [0]
+
     class SimonGame:
         def __init__(self, root):
             self.root = root
@@ -49,7 +52,7 @@ def simon_game_minigame():
             self.user_index = 0
             self.accept_input = False
             self.sequence.append(random.choice(self.colors))
-            self.info_label.config(text=f"Watch the Sequence! (Round {len(self.sequence)})")
+            self.info_label.config(text=f"Watch! (Round {len(self.sequence)})")
             self.root.after(1000, self.play_sequence)
 
         def play_sequence(self):
@@ -69,18 +72,13 @@ def simon_game_minigame():
             self.root.after(300, lambda: self.canvas.itemconfig(self.buttons[color], fill=self.dark_colors[idx]))
 
         def on_canvas_click(self, event):
-            if not self.accept_input:
-                return
-
+            if not self.accept_input: return
             items = self.canvas.find_closest(event.x, event.y)
             if not items: return
             item = items[0]
-
             clicked_color = None
             for color, tag in self.buttons.items():
-                if tag == item:
-                    clicked_color = color
-
+                if tag == item: clicked_color = color
             if clicked_color:
                 self.flash_button(clicked_color)
                 self.check_answer(clicked_color)
@@ -91,12 +89,11 @@ def simon_game_minigame():
                 if self.user_index == len(self.sequence):
                     self.accept_input = False
                     self.info_label.config(text="Correct!")
+                    # Update score as we progress
+                    final_score[0] = len(self.sequence)
                     self.root.after(1000, self.next_round)
             else:
-                # --- THIS IS THE CHANGE ---
-                # We subtract 1 because the user failed the CURRENT round
-                completed_rounds = len(self.sequence) - 1
-                self.info_label.config(text=f"Game Over!\nTotal Successful Rounds: {completed_rounds}")
+                self.info_label.config(text=f"Game Over!\nScore: {final_score[0]}")
                 self.start_btn.config(state="normal", text="Restart")
                 self.accept_input = False
 
@@ -104,6 +101,10 @@ def simon_game_minigame():
     game = SimonGame(root)
     root.mainloop()
 
+    # After window is closed, return the score
+    return final_score[0]
 
-# To run the game
-simon_game_minigame()
+
+# --- Testing the Return ---
+score = simon_game_minigame()
+print(f"The game ended and the function returned: {score}")
