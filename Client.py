@@ -26,6 +26,7 @@ def shopping():
 def miniGame(id):
     run_mini_game(id)
 
+def is_host():
 
 
 while (True):
@@ -54,3 +55,28 @@ time.sleep(1)
 end_result = sock.recv(1024).decode().strip().upper()
 game_over(end_result)
 
+
+class Client:
+    def __init__(self, is_host=False):
+        self.is_host_flag = is_host
+        self.player_id = 0
+        self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.sock.connect(('127.0.0.1', 8080))
+
+    def get_rankings(self):
+
+    def shopping_phase(self):
+        money = self.sock.recv(1024).decode().strip().upper()
+        self.display_money(money)
+        currency = money[self.player_id]
+        purchase = self.get_purchase(currency)  # renamed to avoid recursion
+        self.sock.sendall(purchase.encode('utf-8'))
+
+    def get_minigame(self):
+        return self.sock.recv(1024).decode().strip().upper()
+
+    def has_started(self):
+        return (sock.recv(1024).decode().strip().upper() != "waiting")
+
+    def joined_count(self):
+        return sock.recv(1024).decode().strip().upper()[self.player_id]
