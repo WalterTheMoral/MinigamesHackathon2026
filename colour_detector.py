@@ -61,7 +61,7 @@ def color_to_bgr(color_name):
         return (255, 255, 255)
 
 
-class colour_detector_scene(Game):
+class ColourDetectorScene(Game):
 
     def __init__(self, screen, target_colour):
         super().__init__(screen)
