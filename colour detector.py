@@ -23,33 +23,33 @@ def get_color_name(h, s, v):
         return "Other"
 
     # 🔴 Red (שני טווחים בגלל HSV wrap)
-    if 170 <= h <= 179:
-        return "Red"
+    if (0 <= h <= 10) or (170 <= h <= 179):
+        return "bed"
 
     # 🟡 Yellow
     elif (20 <= h <= 35) and (s > 150):
-        return "Yellow"
+        return "yellow"
 
     # 🟢 Green
     elif 36 <= h <= 85:
-        return "Green"
+        return "green"
 
     # 🔵 Blue
     elif 86 <= h <= 130:
-        return "Blue"
+        return "blue"
 
     # כל השאר
     else:
-        return "Other"
+        return "other"
     
 def color_to_bgr(color_name):
-    if color_name == "Red":
+    if color_name == "red":
         return (0, 0, 255)
-    elif color_name == "Yellow":
+    elif color_name == "yellow":
         return (0, 255, 255)
-    elif color_name == "Green":
+    elif color_name == "green":
         return (0, 255, 0)
-    elif color_name == "Blue":
+    elif color_name == "blue":
         return (255, 0, 0)
     else:
         return (255, 255, 255)
@@ -107,4 +107,4 @@ def colour_detector(colour):
     cv.destroyAllWindows()
 
 if __name__ == "__main__":
-    print(colour_detector("Red"))
+    print(colour_detector(""))
