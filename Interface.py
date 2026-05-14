@@ -1,4 +1,6 @@
 import pygame
+
+import Perfect_Circle
 from Scenes import *
 import Space_bar
 
@@ -24,14 +26,15 @@ def get_password():
     return "321"
 
 def get_game():
-    return "space"
+    return "circle"
 
 def is_finished_waiting():
     return True
 
 game_scenes = {
     "None": Scene(screen),
-    "space": Space_bar.ClickSpeedTestScene(screen)
+    "space": Space_bar.ClickSpeedTestScene(screen),
+    "circle": Perfect_Circle.PerfectCircleScene(screen)
 }
 
 while running:
