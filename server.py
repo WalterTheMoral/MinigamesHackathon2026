@@ -16,6 +16,7 @@ class single_game:
          self.game_password = game_password
          self.id_of_games_left = [0,1,2,3,4,5,6]
          self.mini_game_results = []
+         self.buy_table = []
 
     def add_player(self, player):
         self.player_count += 1
@@ -32,7 +33,7 @@ class single_game:
         for i in range(len(self.player_list)):
             self.player_list[i].give_player_id(i)
 
-    def generate_game_id(self,):
+    def generate_game_id(self):
         if not self.id_of_games_left:
             return "FINISHED"
         index = random.randrange(0, len(self.id_of_games_left))
@@ -234,7 +235,32 @@ def game_thread_func():
                     game.broadcast("PHASE:BUY")
 
                 elif game.game_state == "buy_phase":
+                    for p in game.player_list[:]:
+                        if p in game.buy_results:
+                            continue
 
+                        try:
+                            data = p.socket.recv(1024).decode().strip()
+                            if data:
+                                if "," in data:
+                                    item_name, cost = data.split(",")
+                                    p.coins -= int(cost)
+                                    game.buy_results[p] = f"P{p.player_id} bought {item_name} for {cost}c"
+                                else:
+                                    game.buy_results[p] = f"P{p.player_id} bought nothing"
+                        except BlockingIOError:
+                            continue
+                        except:
+                            game.player_list.remove(p)
+                            game.player_count -= 1
+
+                    if game.player_count > 0 and len(game.buy_results) >= game.player_count:
+                        summary = " | ".join(game.buy_results.values())
+                        game.broadcast(f"BUY_SUMMARY: {summary}")
+
+                        game.buy_results = []
+                        time.sleep(3)
+                        game.game_state = "playing"
                     if time.time() >= game.wait_until:
                         game.game_state = "playing"
                     else:

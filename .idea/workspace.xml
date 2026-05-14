@@ -36,7 +36,7 @@
     "ModuleVcsDetector.initialDetectionPerformed": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
-    "git-widget-placeholder": "coms"
+    "git-widget-placeholder": "master"
   }
 }]]></component>
   <component name="SharedIndexes">
@@ -54,6 +54,15 @@
       <option name="presentableId" value="Default" />
       <updated>1778774644932</updated>
     </task>
+    <task id="LOCAL-00001" summary="server logic final?">
+      <option name="closed" value="true" />
+      <created>1778801371499</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1778801371499</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -66,5 +75,9 @@
         </entry>
       </map>
     </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="server logic final?" />
+    <option name="LAST_COMMIT_MESSAGE" value="server logic final?" />
   </component>
 </project>
