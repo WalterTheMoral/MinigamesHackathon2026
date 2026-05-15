@@ -78,7 +78,7 @@ class JoinGame(Scene):
         self.input_rect.center = self.screen.get_rect().center
 
         self.password = ""
-        self.active = False
+        self.active = True
 
         # Submit button
         self.submit_text = self.ui_font.render(
@@ -147,13 +147,6 @@ class JoinGame(Scene):
 
             # Mouse clicks
             if event.type == pygame.MOUSEBUTTONDOWN:
-
-                # Activate textbox
-                if self.input_rect.collidepoint(event.pos):
-                    self.active = True
-                else:
-                    self.active = False
-
                 # Submit button
                 if self.submit_rect.collidepoint(event.pos):
                     print("Submitted password:", self.password)
