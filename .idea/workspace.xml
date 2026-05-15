@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="ALL" />
+  </component>
   <component name="ChangeListManager">
     <list default="true" id="5b4be628-7a7b-493e-9774-159adccc55e3" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/masheu.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/speed writing.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/MinigamesHackathon2026.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/MinigamesHackathon2026.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/platformer.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -39,6 +41,7 @@
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
     "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "Python.platformer.executor": "Run",
     "RunOnceActivity.MCP Project settings loaded": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.git.unshallow": "true",
@@ -71,11 +74,14 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1778774644932</updated>
-      <workItem from="1778798861340" duration="361000" />
+      <workItem from="1778798861340" duration="4039000" />
     </task>
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="com.intellij.coverage.CoverageDataManagerImpl">
+    <SUITE FILE_PATH="coverage/MinigamesHackathon2026$platformer.coverage" NAME="platformer Coverage Results" MODIFIED="1778806506475" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
 </project>
