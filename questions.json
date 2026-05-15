@@ -1,0 +1,17 @@
+[
+  {
+    "question": "Arie said he was going to be 15 minutes late, how late was he actually?",
+    "answers": ["10m", "45m", "75m", "95m"],
+    "correct": 2
+  },
+  {
+    "question": "What's the name of Arie's grandchild?",
+    "answers": ["Iris", "Thelma", "Bazel", "Naomi"],
+    "correct": 1
+  },
+  {
+    "question": "How many Hackathons were there (including this one)?",
+    "answers": ["7", "5", "6", "4"],
+    "correct": 3
+  }
+]

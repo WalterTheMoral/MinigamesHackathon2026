@@ -345,10 +345,10 @@ class TriviaGame(Game):
         self.answer_rects = []
 
         positions = [
-            (100, 320),
-            (520, 320),
-            (100, 500),
-            (520, 500)
+            (self.WIDTH // 2 - 420, self.HEIGHT // 2 - 100),
+            (self.WIDTH // 2 + 40, self.HEIGHT // 2 - 100),
+            (self.WIDTH // 2 - 420, self.HEIGHT // 2 + 80),
+            (self.WIDTH // 2 + 40, self.HEIGHT // 2 + 80),
         ]
 
         for i, ans in enumerate(
