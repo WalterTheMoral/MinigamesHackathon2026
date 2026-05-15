@@ -235,36 +235,43 @@ def game_thread_func():
                     game.broadcast("PHASE:BUY")
 
                 elif game.game_state == "buy_phase":
+                    if not hasattr(game, 'buy_checkins'):
+                        game.buy_checkins = set()
+
                     for p in game.player_list[:]:
-                        if p in game.buy_results:
+                        if p in game.buy_checkins:
                             continue
 
                         try:
                             data = p.socket.recv(1024).decode().strip()
                             if data:
-                                if "," in data:
-                                    item_name, cost = data.split(",")
-                                    p.coins -= int(cost)
-                                    game.buy_results[p] = f"P{p.player_id} bought {item_name} for {cost}c"
-                                else:
-                                    game.buy_results[p] = f"P{p.player_id} bought nothing"
+                                p.coins = int(data)
+                                game.buy_checkins.add(p)
+                                print(f"P{p.player_id} updated coins to {p.coins}")
                         except BlockingIOError:
                             continue
                         except:
                             game.player_list.remove(p)
                             game.player_count -= 1
-
-                    if game.player_count > 0 and len(game.buy_results) >= game.player_count:
-                        summary = " | ".join(game.buy_results.values())
-                        game.broadcast(f"BUY_SUMMARY: {summary}")
-
-                        game.buy_results = []
-                        time.sleep(3)
+                    if game.player_count > 0 and len(game.buy_checkins) >= game.player_count:
+                        del game.buy_checkins
                         game.game_state = "playing"
-                    if time.time() >= game.wait_until:
-                        game.game_state = "playing"
-                    else:
                         continue
+
+                elif game.game_state == "end_game":
+                    final_sorted = sorted(game.player_list, key=lambda p: p.coins, reverse=True)
+                    results_str = " | ".join(
+                        [f"RANK {i + 1}: P{p.player_id} ({p.coins} coins)" for i, p in enumerate(final_sorted)])
+                    game.broadcast(f"FINAL_RESULTS: {results_str}")
+                    time.sleep(2)
+                    for p in game.player_list:
+                        try:
+                            p.socket.send(b"DISCONNECT: Server closing game.")
+                            p.socket.close()
+                        except:
+                            pass
+                    print(f"Game with password {game.game_password} has finished and been removed.")
+                    running_games.remove(game)
 
         time.sleep(0.1)
 
