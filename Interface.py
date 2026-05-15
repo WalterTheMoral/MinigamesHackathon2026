@@ -283,6 +283,7 @@ pygame.display.set_caption("Mario Party")
 clock = pygame.time.Clock()
 
 client = InterfaceClient()
+# activeScene = BettingScene(screen, 10, [4, 1, 2, 5])
 activeScene = Title(screen)
 last_started_round = 0
 running = True

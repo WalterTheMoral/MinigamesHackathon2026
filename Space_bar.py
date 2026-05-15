@@ -36,7 +36,7 @@ class ClickSpeedTestScene(Game):
         # CONSTANTS
         # -----------------------------
         self.WIDTH, self.HEIGHT = screen.get_size()
-        self.duration = 2 # TODO: Change to 15
+        self.duration = 10
 
         self.WHITE = (255, 255, 255)
         self.BLACK = (20, 20, 25)

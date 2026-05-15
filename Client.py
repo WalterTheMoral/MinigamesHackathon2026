@@ -17,6 +17,7 @@ class GameClient:
         self.port = port
         self.player_id = None
         self.coins = 0
+        self.active_bid = {"amount": 0, "predicted_rank": 0}
 
     def connect(self):
         try:
@@ -135,6 +136,47 @@ class GameClient:
                 print("\nClosing client...")
                 self.sock.close()
                 sys.exit(0)
+
+    def place_pre_game_bid(self, bid, rank):
+        try:
+            self.active_bid_amount = bid
+            self.predicted_rank = rank
+            print(f"Bid locked: {bid} coins on Rank {rank}.")
+        except ValueError:
+            self.active_bid = {"amount": 0, "predicted_rank": 0}
+
+    def check_bid(self, leaderboard_str):
+        """
+        Parses: 'LEADERBOARD: P0: 10.5 | P1: 8.0'
+        Calculates if the bid was successful.
+        """
+        # 1. Strip the prefix and split into individual entries
+        data = leaderboard_str.replace("LEADERBOARD: ", "").strip()
+        entries = data.split(" | ")
+
+        actual_rank = -1
+        for index, entry in enumerate(entries):
+            # entry looks like 'P0: 10.5'
+            if f"P{self.player_id}:" in entry:
+                actual_rank = index + 1  # Ranks are 1-based (1st, 2nd, etc)
+                break
+
+        print(f"\n--- Round Results ---")
+        print(f"You placed: {actual_rank}")
+
+        # 2. Logic: If correct, add the bid amount. If wrong, subtract it.
+        if self.active_bid_amount > 0:
+            if actual_rank == self.predicted_rank:
+                print(f"BINGO! You won {self.active_bid_amount} coins.")
+                self.coins += self.active_bid_amount
+            else:
+                print(f"BOO! You lost {self.active_bid_amount} coins.")
+                self.coins -= self.active_bid_amount
+
+        self.active_bid_amount = 0
+        self.predicted_rank = 0
+
+        return self.coins
 
 
 if __name__ == "__main__":

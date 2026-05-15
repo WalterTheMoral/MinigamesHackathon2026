@@ -181,7 +181,7 @@ class RhythmGame(Game):
         self.feedback = ""
         self.feedback_time = 0
 
-        self.GAME_TIME = 5 # TODO: self.GAME_TIME = 30
+        self.GAME_TIME = 25
 
         # result delay
         self.result_time = None
