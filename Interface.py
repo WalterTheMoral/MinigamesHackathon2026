@@ -1,6 +1,7 @@
 import pygame
 
 import Perfect_Circle
+import Rhythm
 from Scenes import *
 import Space_bar
 import colour_detector
@@ -28,7 +29,7 @@ def get_password():
     return "321"
 
 def get_game():
-    return "circle"
+    return "rhythm"
 
 def is_finished_waiting():
     return True
@@ -38,7 +39,8 @@ game_scenes = {
     "space": Space_bar.ClickSpeedTestScene(screen),
     "circle": Perfect_Circle.PerfectCircleScene(screen),
     "colour": colour_detector.ColourDetectorScene(screen, "red"),
-    "blink": blink_counter.BlinkCounterScene(screen)
+    "blink": blink_counter.BlinkCounterScene(screen),
+    "rhythm": Rhythm.RhythmGame(screen)
 }
 
 while running:
@@ -74,7 +76,6 @@ while running:
         if activeScene.get_return_state():
             print(activeScene.get_return_state())
             activeScene = WaitBetweenGame(screen, activeScene.get_return_state(), is_finished_waiting)
-
 
     pygame.display.flip()
 
