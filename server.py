@@ -23,11 +23,37 @@ class single_game:
         self.player_list.append(player)
 
     def broadcast(self, message):
-        for p in self.player_list:
+        # Ensure every message ends with a newline so the client knows when to stop reading
+        formatted_msg = f"{message}\n"
+        # Use explicit utf-8 encoding
+        encoded_msg = formatted_msg.encode('utf-8')
+
+        # Keep track of players who have disconnected
+        disconnected_players = []
+
+        # Iterate over a COPY of the list (using list()) in case another thread
+        # modifies player_list while we are looping through it.
+        for p in list(self.player_list):
             try:
-                p.socket.send(message.encode())
+                p.socket.sendall(encoded_msg)
+            except (ConnectionError, socket.error) as e:
+                # If sending fails, the client disconnected or the network dropped.
+                print(f"Error sending to player. Disconnecting them. Error: {e}")
+                disconnected_players.append(p)
+            except Exception as e:
+                # Catching other unexpected exceptions so the server doesn't crash
+                print(f"Unexpected error: {e}")
+                disconnected_players.append(p)
+
+        # Clean up disconnected players
+        for p in disconnected_players:
+            if p in self.player_list:
+                self.player_list.remove(p)
+            try:
+                p.socket.close()  # Ensure the socket is properly closed
             except:
                 pass
+
 
     def give_players_id(self):
         for i in range(len(self.player_list)):
@@ -173,7 +199,7 @@ def lobby_thread_func():
                         if target_game != None:
                             new_player = player(sock, False)
                             target_game.add_player(new_player)
-                            target_game.broadcast(target_game.player_count)
+                            target_game.broadcast(target_game.player_count + "\n")
                             in_processing_players.remove(p_data)
                         else:
                             sock.send(b"Wrong! Try again: ")
@@ -201,7 +227,7 @@ def game_thread_func():
                         game.id_of_games_left = [0, 1, 2, 3, 4, 5, 6]
 
                     game_id = game.generate_game_id()
-                    game.broadcast(f"START_GAME:{mini_game_switch(game_id)}")
+                    game.broadcast(f"START_GAME:{mini_game_switch(game_id)}\n".encode('utf-8'))
                     game.mini_game_results = {}
                     game.game_state = "waiting_for_results"
 
@@ -228,10 +254,10 @@ def game_thread_func():
                 elif game.game_state == "leaderboard":
                     game.organize_leader_board()
                     lb_msg = "LEADERBOARD: " + game.leaderboard_display
-                    game.broadcast(lb_msg)
+                    game.broadcast(lb_msg + "\n")
                     game.wait_until = time.time() + 5
                     game.game_state = "buy_phase"
-                    game.broadcast("PHASE:BUY")
+                    game.broadcast("PHASE:BUY \n")
 
                 elif game.game_state == "buy_phase":
                     if not hasattr(game, 'buy_checkins'):
@@ -261,7 +287,7 @@ def game_thread_func():
                     final_sorted = sorted(game.player_list, key=lambda p: p.coins, reverse=True)
                     results_str = " | ".join(
                         [f"RANK {i + 1}: P{p.player_id} ({p.coins} coins)" for i, p in enumerate(final_sorted)])
-                    game.broadcast(f"FINAL_RESULTS: {results_str}")
+                    game.broadcast(f"FINAL_RESULTS: {results_str} \n")
                     time.sleep(2)
                     for p in game.player_list:
                         try:
@@ -278,7 +304,7 @@ def game_thread_func():
 server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 server_socket.bind(('0.0.0.0', 5555))
 server_socket.listen(10)
-
+server_socket.setblocking(False)
 lobby_thread = threading.Thread(target=lobby_thread_func, daemon=True)
 game_thread = threading.Thread(target=game_thread_func, daemon=True)
 
