@@ -14,7 +14,7 @@ class single_game:
          self.game_state = "waiting"
          self.player_list = []
          self.game_password = game_password
-         self.id_of_games_left = [0,1,2,3,4,5,6]
+         self.id_of_games_left = [0,1,2,3,4,5,6,7]
          self.mini_game_results = []
          self.buy_table = []
 
@@ -112,6 +112,10 @@ def search_for_games(password):
     return None
 
 
+def mini_game_switch(self, mini_game_id):
+    game_list = ["space", "colour", "circle", "blink", "rhythm", "reaction", "trivia", "speed"]
+    return game_list[mini_game_id]
+
 def lobby_thread_func():
 
     while True:
@@ -169,12 +173,7 @@ def lobby_thread_func():
                         if target_game != None:
                             new_player = player(sock, False)
                             target_game.add_player(new_player)
-                            # Notify everyone
-                            target_game.broadcast(f"New player joined! Total: {target_game.player_count}/5\n")
-
-                            if target_game.player_count >= 3:
-                                target_game.broadcast("Host can now type 'START' to begin!\n")
-
+                            target_game.broadcast(target_game.player_count)
                             in_processing_players.remove(p_data)
                         else:
                             sock.send(b"Wrong! Try again: ")
@@ -202,7 +201,7 @@ def game_thread_func():
                         game.id_of_games_left = [0, 1, 2, 3, 4, 5, 6]
 
                     game_id = game.generate_game_id()
-                    game.broadcast(f"START_GAME:{game_id}")
+                    game.broadcast(f"START_GAME:{mini_game_switch(game_id)}")
                     game.mini_game_results = {}
                     game.game_state = "waiting_for_results"
 
