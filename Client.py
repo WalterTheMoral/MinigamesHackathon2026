@@ -88,11 +88,21 @@ class GameClient:
             game_name = msg.split(":")[1]
             self.run_mini_game(game_name)
 
-        elif msg.startswith("LEADERBOARD:"):
-            print(f"\n[LEADERBOARD] {msg.replace('LEADERBOARD:', '').strip()}")
+
+        if msg.startswith("LEADERBOARD:"):
+
+            # Update local coins based on rewards AND the bid result
+
+            self.coins = self.check_bid(msg)
+
 
         elif msg.startswith("PHASE:BUY"):
+
             self.shopping()
+
+            # Immediately send the NEW total back so the server is synced
+
+            self.sock.sendall(f"{self.coins}".encode('utf-8'))
 
         elif msg.startswith("FINAL_RESULTS:"):
             print(f"\n[GAME OVER] {msg.replace('FINAL_RESULTS:', '').strip()}")
@@ -147,35 +157,44 @@ class GameClient:
 
     def check_bid(self, leaderboard_str):
         """
-        Parses: 'LEADERBOARD: P0: 10.5 | P1: 8.0'
-        Calculates if the bid was successful.
+        Calculates rewards from the server AND the local betting result.
         """
-        # 1. Strip the prefix and split into individual entries
+        # 1. Parse the leaderboard string
         data = leaderboard_str.replace("LEADERBOARD: ", "").strip()
         entries = data.split(" | ")
 
+        # 2. Identify your rank
         actual_rank = -1
         for index, entry in enumerate(entries):
-            # entry looks like 'P0: 10.5'
             if f"P{self.player_id}:" in entry:
-                actual_rank = index + 1  # Ranks are 1-based (1st, 2nd, etc)
+                actual_rank = index + 1
                 break
 
-        print(f"\n--- Round Results ---")
-        print(f"You placed: {actual_rank}")
+        # 3. ADD SERVER REWARDS (Must match server's award_coins logic)
+        rewards = [25, 20, 15, 10, 5]
+        if 0 < actual_rank <= len(rewards):
+            server_reward = rewards[actual_rank - 1]
+            self.coins += server_reward
+            print(f"Server Reward: +{server_reward} coins.")
 
-        # 2. Logic: If correct, add the bid amount. If wrong, subtract it.
-        if self.active_bid_amount > 0:
-            if actual_rank == self.predicted_rank:
-                print(f"BINGO! You won {self.active_bid_amount} coins.")
-                self.coins += self.active_bid_amount
+        # 4. ADD/SUBTRACT LOCAL BID
+        # Note: Using getattr to avoid crashes if variables weren't initialized
+        bid_amt = getattr(self, 'active_bid_amount', 0)
+        pred_rank = getattr(self, 'predicted_rank', 0)
+
+        if bid_amt > 0:
+            if actual_rank == pred_rank:
+                print(f"Bidding Win! +{bid_amt} coins.")
+                self.coins += bid_amt
             else:
-                print(f"BOO! You lost {self.active_bid_amount} coins.")
-                self.coins -= self.active_bid_amount
+                print(f"Bidding Loss! -{bid_amt} coins.")
+                self.coins -= bid_amt
 
+        # Reset bid for next round
         self.active_bid_amount = 0
         self.predicted_rank = 0
 
+        print(f"Total coins now: {self.coins}")
         return self.coins
 
 

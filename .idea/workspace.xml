@@ -4,7 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="5b4be628-7a7b-493e-9774-159adccc55e3" name="Changes" comment="biding updated" />
+    <list default="true" id="5b4be628-7a7b-493e-9774-159adccc55e3" name="Changes" comment="biding updated">
+      <change beforePath="$PROJECT_DIR$/Client.py" beforeDir="false" afterPath="$PROJECT_DIR$/Client.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Interface.py" beforeDir="false" afterPath="$PROJECT_DIR$/Interface.py" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -39,7 +42,7 @@
     &quot;git-widget-placeholder&quot;: &quot;master&quot;
   }
 }</component>
-  <component name="RunManager" selected="Python.Interface">
+  <component name="RunManager" selected="Python.server">
     <configuration name="Client" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="MinigamesHackathon2026" />
       <option name="ENV_FILES" value="" />
@@ -108,8 +111,8 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.Interface" />
         <item itemvalue="Python.server" />
+        <item itemvalue="Python.Interface" />
         <item itemvalue="Python.Client" />
       </list>
     </recent_temporary>
@@ -169,7 +172,15 @@
       <option name="project" value="LOCAL" />
       <updated>1778816142484</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="biding updated">
+      <option name="closed" value="true" />
+      <created>1778822220478</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1778822220478</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
