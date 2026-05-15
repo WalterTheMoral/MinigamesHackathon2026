@@ -138,7 +138,7 @@ def search_for_games(password):
     return None
 
 
-def mini_game_switch(self, mini_game_id):
+def mini_game_switch( mini_game_id):
     game_list = ["space", "colour", "circle", "blink", "rhythm", "reaction", "trivia", "speed"]
     return game_list[mini_game_id]
 
