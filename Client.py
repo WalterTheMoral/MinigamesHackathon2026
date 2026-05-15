@@ -6,7 +6,7 @@ import sys
 
 
 class GameClient:
-    def __init__(self, host='10.13.244.168', port=5555):
+    def __init__(self, host='172.16.0.243', port=5555):
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.host = host
         self.port = port

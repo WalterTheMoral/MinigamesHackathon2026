@@ -17,7 +17,7 @@ import blink_counter
 import colour_detector
 from Scenes import *
 
-SERVER_HOST = "10.13.244.168"
+SERVER_HOST = "172.16.0.243"
 SERVER_PORT = 5555
 MAX_PLAYERS = 5
 REWARDS = [25, 20, 15, 10, 5]
