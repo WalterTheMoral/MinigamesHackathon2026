@@ -190,29 +190,11 @@ class RhythmGame(Game):
     # EVENTS
     # ==================================================
     def handle_events(self, events):
-
         for event in events:
-
-            if event.type == pygame.QUIT:
-
-                self.return_state = (
-                    "quit",
-                    None
-                )
-
             if event.type == pygame.KEYDOWN:
-
                 if event.key == pygame.K_ESCAPE:
-
                     pygame.mixer.music.stop()
-
-                    self.return_state = (
-                        "exit",
-                        (
-                            self.score,
-                            self.max_streak
-                        )
-                    )
+                    self.return_state = (self.score, True)
 
             # ---------------- INPUT ----------------
             if (
@@ -363,7 +345,7 @@ class RhythmGame(Game):
                 pygame.time.get_ticks()
                 >= self.result_time
             ):
-                self.return_state = self.score
+                self.return_state = (self.score, True)
 
                 self.result_time = None
 

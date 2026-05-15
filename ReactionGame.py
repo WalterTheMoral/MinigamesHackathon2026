@@ -70,28 +70,7 @@ class ReactionTimeGame(Game):
     def handle_events(self, events):
 
         for event in events:
-
-            if event.type == pygame.QUIT:
-
-                self.return_state = (
-                    "quit",
-                    None
-                )
-
-            if event.type == pygame.KEYDOWN:
-
-                if event.key == pygame.K_ESCAPE:
-
-                    self.return_state = (
-                        "exit",
-                        self.get_total_score()
-                    )
-
-            # -----------------------------
-            # CLICK
-            # -----------------------------
             if event.type == pygame.MOUSEBUTTONDOWN:
-
                 self.handle_click()
 
     # ==================================================
@@ -243,10 +222,7 @@ class ReactionTimeGame(Game):
 
             if now >= self.finish_return_time:
 
-                self.return_state = (
-                    "finished",
-                    self.get_total_score()
-                )
+                self.return_state = (self.get_total_score(), False)
 
                 self.finish_return_time = None
 

@@ -31,7 +31,7 @@ def get_password():
     return "321"
 
 def get_game():
-    return "trivia"
+    return "reaction"
 
 def is_finished_waiting():
     return True

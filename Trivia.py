@@ -172,10 +172,7 @@ class TriviaGame(Game):
 
                 if event.key == pygame.K_ESCAPE:
 
-                    self.return_state = (
-                        "exit",
-                        self.total_score
-                    )
+                    self.return_state = (self.total_score, True)
 
             # -----------------------------
             # ANSWER CLICK
@@ -481,30 +478,22 @@ class TriviaGame(Game):
     # DRAW
     # ==================================================
     def draw(self):
-
         self.update()
-
-        self.screen.fill(self.BLACK)
 
         # -----------------------------
         # QUESTION
         # -----------------------------
         if self.state == "QUESTION":
-
             self.draw_question()
 
         # -----------------------------
         # FEEDBACK
         # -----------------------------
         elif self.state == "FEEDBACK":
-
             self.draw_feedback()
 
         # -----------------------------
         # FINAL
         # -----------------------------
         elif self.state == "FINAL":
-
             self.draw_final()
-
-        pygame.display.flip()

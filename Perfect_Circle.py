@@ -442,7 +442,7 @@ class PerfectCircleScene(Game):
         ):
 
             if pygame.time.get_ticks() >= self.score_return_time:
-                self.return_state = self.score
+                self.return_state = self.score, True
 
                 self.score_return_time = None
 

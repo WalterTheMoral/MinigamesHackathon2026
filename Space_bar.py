@@ -79,7 +79,7 @@ class ClickSpeedTestScene(Game):
                 if event.key == pygame.K_ESCAPE:
                     print("esc")
                     cps = self.clicks / self.duration
-                    self.return_state = (self.clicks, cps)
+                    self.return_state = (self.clicks, True)
 
     def update(self):
 
