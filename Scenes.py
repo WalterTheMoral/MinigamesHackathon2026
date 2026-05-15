@@ -261,7 +261,7 @@ class WaitBetweenGame(Scene):
         self.is_finished_waiting = is_finished_waiting
 
         self.score_font = pygame.font.SysFont("Arial", 90)
-        self.score_text = self.score_font.render(f"You got {self.score} points", True, (0,0,0))
+        self.score_text = self.score_font.render(f"You got {int(self.score)} points", True, (0,0,0))
 
         self.waiting_text = self.score_font.render("Waiting for others to finish...", True, (0,0,0))
 
