@@ -54,7 +54,6 @@ class single_game:
             except:
                 pass
 
-
     def give_players_id(self):
         for i in range(len(self.player_list)):
             self.player_list[i].give_player_id(i)
@@ -185,7 +184,7 @@ def lobby_thread_func():
                 elif p_data["state"] == "HOST_WAITING":
                     if data == "START":
                         game = p_data["game_ref"]
-                        if game.player_count >= 3:
+                        if game.player_count >= 2:
                             game.give_players_id()
                             game.game_state = "playing"
                             in_processing_players.remove(p_data)
@@ -214,20 +213,21 @@ def game_thread_func():
     while True:
         with game_lock:  # Only one lock needed at the top
             for game in running_games[:]:
-                # --- STARTING ---
                 if game.game_state == "playing":
+                    if not game.id_of_games_left:
+                        game.game_state = "end_game"
+                        continue
+                    game_id = game.generate_game_id()
                     for p in game.player_list[:]:
                         try:
-                            p.socket.send(f"YOUR_ID:{p.player_id}".encode())
+                            p.socket.sendall(f"YOUR_ID:{p.player_id}".encode())
                         except:
                             game.player_list.remove(p)
                             game.player_count -= 1
 
-                    if not game.id_of_games_left:
-                        game.id_of_games_left = [0, 1, 2, 3, 4, 5, 6]
+                    game_name = mini_game_switch(game_id)
+                    game.broadcast(f"START_GAME:{game_name}\n".encode('utf-8'))
 
-                    game_id = game.generate_game_id()
-                    game.broadcast(f"START_GAME:{mini_game_switch(game_id)}\n".encode('utf-8'))
                     game.mini_game_results = {}
                     game.game_state = "waiting_for_results"
 

@@ -279,3 +279,295 @@ class WaitBetweenGame(Scene):
     def get_return_state(self):
         return self.is_finished_waiting()
 
+    class BettingScene(Scene):
+        def __init__(self, screen, total_points, leaderboard):
+            super().__init__(screen)
+
+            self.total_points = total_points
+            self.leaderboard = leaderboard
+            self.num_players = len(leaderboard)
+
+            self.selected_place = 1
+            self.bid_amount = 0
+
+            self.screen_width = screen.get_width()
+            self.screen_height = screen.get_height()
+
+            # ===== FONTS =====
+            self.title_font = pygame.font.SysFont(None, 64)
+            self.font = pygame.font.SysFont(None, 40)
+            self.small_font = pygame.font.SysFont(None, 34)
+
+            # ===== MAIN AREA POSITIONING =====
+            # Slightly left of center
+            self.main_center_x = self.screen_width // 2 - 180
+
+            # ===== SLIDER =====
+            self.slider_rect = pygame.Rect(
+                self.main_center_x - 300,
+                220,
+                600,
+                12
+            )
+
+            self.slider_handle_radius = 18
+            self.dragging_slider = False
+
+            # ===== PLACE BUTTONS =====
+            self.place_buttons = []
+
+            button_width = 95
+            button_height = 75
+            spacing = 20
+
+            total_width = (
+                    self.num_players * button_width
+                    + (self.num_players - 1) * spacing
+            )
+
+            start_x = self.main_center_x - total_width // 2
+
+            for i in range(self.num_players):
+                rect = pygame.Rect(
+                    start_x + i * (button_width + spacing),
+                    390,
+                    button_width,
+                    button_height
+                )
+
+                self.place_buttons.append((i + 1, rect))
+
+            # ===== SUBMIT BUTTON =====
+            self.submit_button = pygame.Rect(
+                self.main_center_x - 120,
+                560,
+                240,
+                85
+            )
+
+            # ===== LEADERBOARD =====
+            self.leaderboard_rect = pygame.Rect(
+                self.screen_width - 360,
+                100,
+                300,
+                520
+            )
+
+        def draw(self):
+            self.screen.fill((28, 28, 38))
+
+            # ===== TITLE =====
+            title = self.title_font.render(
+                "PLACE YOUR BET",
+                True,
+                (255, 255, 255)
+            )
+
+            title_rect = title.get_rect(
+                center=(self.main_center_x, 90)
+            )
+
+            self.screen.blit(title, title_rect)
+
+            # ===== BID TEXT =====
+            bid_text = self.font.render(
+                f"Bid Amount: {self.bid_amount} / {self.total_points}",
+                True,
+                (240, 240, 240)
+            )
+
+            bid_rect = bid_text.get_rect(
+                center=(self.main_center_x, 170)
+            )
+
+            self.screen.blit(bid_text, bid_rect)
+
+            # ===== SLIDER =====
+            pygame.draw.rect(
+                self.screen,
+                (90, 90, 90),
+                self.slider_rect,
+                border_radius=10
+            )
+
+            handle_x = self.get_slider_handle_x()
+
+            pygame.draw.circle(
+                self.screen,
+                (0, 210, 255),
+                (handle_x, self.slider_rect.centery),
+                self.slider_handle_radius
+            )
+
+            # ===== PLACE TEXT =====
+            place_text = self.font.render(
+                "Select Final Placement",
+                True,
+                (255, 255, 255)
+            )
+
+            place_rect = place_text.get_rect(
+                center=(self.main_center_x, 320)
+            )
+
+            self.screen.blit(place_text, place_rect)
+
+            # ===== PLACE BUTTONS =====
+            for place, rect in self.place_buttons:
+                color = (
+                    (0, 180, 80)
+                    if place == self.selected_place
+                    else (70, 70, 85)
+                )
+
+                pygame.draw.rect(
+                    self.screen,
+                    color,
+                    rect,
+                    border_radius=14
+                )
+
+                text = self.font.render(
+                    str(place),
+                    True,
+                    (255, 255, 255)
+                )
+
+                text_rect = text.get_rect(center=rect.center)
+
+                self.screen.blit(text, text_rect)
+
+            # ===== SUBMIT BUTTON =====
+            pygame.draw.rect(
+                self.screen,
+                (220, 120, 20),
+                self.submit_button,
+                border_radius=16
+            )
+
+            submit_text = self.font.render(
+                "SUBMIT",
+                True,
+                (255, 255, 255)
+            )
+
+            submit_rect = submit_text.get_rect(
+                center=self.submit_button.center
+            )
+
+            self.screen.blit(submit_text, submit_rect)
+
+            # ===== LEADERBOARD PANEL =====
+            pygame.draw.rect(
+                self.screen,
+                (45, 45, 60),
+                self.leaderboard_rect,
+                border_radius=18
+            )
+
+            leaderboard_title = self.font.render(
+                "Leaderboard",
+                True,
+                (255, 255, 255)
+            )
+
+            title_rect = leaderboard_title.get_rect(
+                center=(
+                    self.leaderboard_rect.centerx,
+                    self.leaderboard_rect.y + 40
+                )
+            )
+
+            self.screen.blit(leaderboard_title, title_rect)
+
+            # Sort descending by score
+            sorted_players = sorted(
+                enumerate(self.leaderboard),
+                key=lambda x: x[1],
+                reverse=True
+            )
+
+            y = self.leaderboard_rect.y + 100
+
+            for rank, (player_id, points) in enumerate(sorted_players, start=1):
+                row_text = (
+                    f"{rank}. Player {player_id}"
+                    f"   {points} pts"
+                )
+
+                text_surface = self.small_font.render(
+                    row_text,
+                    True,
+                    (235, 235, 235)
+                )
+
+                self.screen.blit(
+                    text_surface,
+                    (self.leaderboard_rect.x + 25, y)
+                )
+
+                y += 55
+
+        def handle_events(self, events):
+            for event in events:
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    mouse_pos = pygame.mouse.get_pos()
+
+                    # Slider
+                    if self.is_mouse_on_slider(mouse_pos):
+                        self.dragging_slider = True
+                        self.update_slider(mouse_pos[0])
+
+                    # Placement buttons
+                    for place, rect in self.place_buttons:
+                        if rect.collidepoint(mouse_pos):
+                            self.selected_place = place
+
+                    # Submit button
+                    if self.submit_button.collidepoint(mouse_pos):
+                        self.return_state = {
+                            "bid_amount": self.bid_amount,
+                            "predicted_place": self.selected_place
+                        }
+
+                elif event.type == pygame.MOUSEBUTTONUP:
+                    self.dragging_slider = False
+
+                elif event.type == pygame.MOUSEMOTION:
+                    if self.dragging_slider:
+                        self.update_slider(event.pos[0])
+
+        def get_slider_handle_x(self):
+            ratio = self.bid_amount / max(1, self.total_points)
+
+            return int(
+                self.slider_rect.x
+                + ratio * self.slider_rect.width
+            )
+
+        def update_slider(self, mouse_x):
+            relative_x = mouse_x - self.slider_rect.x
+
+            relative_x = max(
+                0,
+                min(relative_x, self.slider_rect.width)
+            )
+
+            ratio = relative_x / self.slider_rect.width
+
+            self.bid_amount = int(
+                ratio * self.total_points
+            )
+
+        def is_mouse_on_slider(self, mouse_pos):
+            slider_hitbox = pygame.Rect(
+                self.slider_rect.x,
+                self.slider_rect.y - 25,
+                self.slider_rect.width,
+                50
+            )
+
+            return slider_hitbox.collidepoint(mouse_pos)
+
+        def get_return_state(self):
+            return self.return_state
