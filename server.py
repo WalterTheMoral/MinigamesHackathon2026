@@ -259,42 +259,48 @@ def game_thread_func():
                     game.game_state = "buy_phase"
                     game.broadcast("PHASE:BUY \n")
 
-
                 elif game.game_state == "buy_phase":
                     if time.time() < getattr(game, 'wait_until', 0):
-                        continue  # Still "pausing" to let players look at the leaderboard
+                        continue
+
                     if not hasattr(game, 'buy_checkins'):
                         game.buy_checkins = set()
+
                     for p in game.player_list[:]:
                         if p in game.buy_checkins:
                             continue
+
                         try:
-                            p.socket.setblocking(False)  # Ensure non-blocking
+                            # Try to see if player sent an update, but don't FORCE it to be 0
+                            p.socket.setblocking(False)
                             data = p.socket.recv(1024).decode().strip()
-                            if data:
-                                # Basic validation: ensure data is a number
-                                if data.isdigit():
-                                    p.coins = int(data)
-                                    game.buy_checkins.add(p)
-                                    print(f"P{p.player_id} finished shopping. Coins: {p.coins}")
+
+                            if data and data.isdigit():
+                                # Only update if they actually sent a number
+                                p.coins = int(data)
+                                print(f"P{p.player_id} manual update: {p.coins} coins")
                         except (BlockingIOError, socket.error):
-                            continue
-                        except Exception as e:
-                            print(f"Player error: {e}")
-                            game.player_list.remove(p)
-                            game.player_count -= 1
-                    # 2. Only move to playing once EVERYONE has submitted their shop result
+                            pass
+
+                            # Auto-checkin players after the 5s leaderboard pause
+                        # so the game doesn't get stuck at 0 coins
+                        game.buy_checkins.add(p)
+
                     if game.player_count > 0 and len(game.buy_checkins) >= game.player_count:
-                        print("All players finished shopping. Moving to next game.")
+                        print("Moving to next game. Current Standings:")
+                        for p in game.player_list:
+                            print(f"P{p.player_id}: {p.coins} coins")
 
                         del game.buy_checkins
-
                         game.game_state = "playing"
 
                 elif game.game_state == "end_game":
+                    # Sort strictly by the coins accumulated in the player objects
                     final_sorted = sorted(game.player_list, key=lambda p: p.coins, reverse=True)
+
                     results_str = " | ".join(
                         [f"RANK {i + 1}: P{p.player_id} ({p.coins} coins)" for i, p in enumerate(final_sorted)])
+
                     game.broadcast(f"FINAL_RESULTS: {results_str} \n")
                     time.sleep(2)
                     for p in game.player_list:

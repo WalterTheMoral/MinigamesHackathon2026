@@ -88,25 +88,19 @@ class GameClient:
             game_name = msg.split(":")[1]
             self.run_mini_game(game_name)
 
-
         if msg.startswith("LEADERBOARD:"):
-
-            # Update local coins based on rewards AND the bid result
-
-            self.coins = self.check_bid(msg)
-
+            print(f"\n[LEADERBOARD] {msg.replace('LEADERBOARD:', '').strip()}")
+            # We don't call check_bid anymore to avoid resetting anything
 
         elif msg.startswith("PHASE:BUY"):
-
-            self.shopping()
-
-            # Immediately send the NEW total back so the server is synced
-
-            self.sock.sendall(f"{self.coins}".encode('utf-8'))
+            # We just print the status.
+            # If you want to automate it so coins don't reset to 0:
+            print("\n>>> SHOP PHASE <<<")
+            # Send 'SKIP' or just don't send 0.
+            # Best fix: send a "keep alive" or nothing if not shopping.
 
         elif msg.startswith("FINAL_RESULTS:"):
             print(f"\n[GAME OVER] {msg.replace('FINAL_RESULTS:', '').strip()}")
-
         elif msg.startswith("DISCONNECT:"):
             print("\n[SERVER CLOSED GAME]")
             sys.exit(0)
