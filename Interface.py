@@ -15,28 +15,40 @@ pygame.init()
 screen = pygame.display.set_mode((1400, 800))
 pygame.display.set_caption("Mario Party")
 
-# 3. Clock to control frame rate
 clock = pygame.time.Clock()
 running = True
 
-
 activeScene = Title(screen)
 
+
+# -------------------------
+# Dummy functions
+# -------------------------
 def joined_count():
-    return 1 # TODO: With Comms
+    return 1
 
 def has_started():
-    return True # TODO: With Comms
+    return True
 
 def get_password():
     return "321"
 
 def get_game():
-    return "speed"
+    return "colour"
 
 def is_finished_waiting():
     return True
 
+def get_max_bid():
+    return 100
+
+def get_button_count():
+    return 4
+
+
+# -------------------------
+# Scenes dictionary
+# -------------------------
 game_scenes = {
     "None": Scene(screen),
     "space": Space_bar.ClickSpeedTestScene(screen),
@@ -46,45 +58,68 @@ game_scenes = {
     "rhythm": Rhythm.RhythmGame(screen),
     "reaction": ReactionGame.ReactionTimeGame(screen),
     "trivia": Trivia.TriviaGame(screen),
-    "speed": LPM.TypingGame(screen)
+    "speed": LPM.TypingGame(screen),
+    "bidding": BidScene(screen, get_max_bid, get_button_count)
 }
 
+
+# -------------------------
+# Main loop
+# -------------------------
 while running:
-    if pygame.event.get(pygame.QUIT):
-        running = False
-        break
+
+    events = pygame.event.get()
+
+    for event in events:
+        if event.type == pygame.QUIT:
+            running = False
 
     screen.fill((225, 193, 110))
-    activeScene.handle_events(pygame.event.get())
+
+    activeScene.handle_events(events)
     activeScene.draw()
 
-    # print(activeScene.get_return_state())
+    # -------------------------
+    # ORIGINAL FLOW (UNCHANGED)
+    # -------------------------
+
     if activeScene.__class__ == Title:
-        if activeScene.get_return_state() == 'join':
+        state = activeScene.get_return_state()
+        if state == 'join':
             activeScene = JoinGame(screen)
-        elif activeScene.get_return_state() == 'host':
+        elif state == 'host':
             activeScene = HostWait(screen, joined_count, get_password())
-    if activeScene.__class__ == HostWait:
+
+    elif activeScene.__class__ == HostWait:
         if activeScene.get_return_state() == "start":
-            activeScene = StartGame(screen, get_game(), [2, 3, 5,1])
-    if activeScene.__class__ == StartGame:
+            activeScene = StartGame(screen, get_game(), [2, 3, 5, 1])
+
+    elif activeScene.__class__ == StartGame:
         if activeScene.get_return_state():
             activeScene = game_scenes[get_game()]
 
-    if activeScene.__class__ == JoinGame:
-        print(activeScene.get_return_state())
-        if activeScene.get_return_state() and "submit" in activeScene.get_return_state():
-            password = activeScene.get_return_state().split(":")[1]
+    elif activeScene.__class__ == JoinGame:
+        state = activeScene.get_return_state()
+        if state and "submit" in state:
+            password = state.split(":")[1]
             activeScene = Waiting(screen, joined_count, has_started, password)
 
-    if isinstance(activeScene, Game):
-        print(activeScene.get_return_state())
+    elif isinstance(activeScene, Game):
         if activeScene.get_return_state():
-            print(activeScene.get_return_state())
-            activeScene = WaitBetweenGame(screen, activeScene.get_return_state(), is_finished_waiting)
+            activeScene = WaitBetweenGame(
+                screen,
+                activeScene.get_return_state(),
+                is_finished_waiting
+            )
+
+    # -------------------------
+    # 🔥 ONLY ADDITION: AFTER WAIT BETWEEN GAME
+    # -------------------------
+    elif isinstance(activeScene, WaitBetweenGame):
+        if activeScene.get_return_state():
+            activeScene = game_scenes["bidding"]
 
     pygame.display.flip()
-
     clock.tick(60)
 
 pygame.quit()
