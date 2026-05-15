@@ -199,7 +199,7 @@ def lobby_thread_func():
                         if target_game != None:
                             new_player = player(sock, False)
                             target_game.add_player(new_player)
-                            target_game.broadcast(target_game.player_count + "\n")
+                            target_game.broadcast(f"Player joined! Total players: {target_game.player_count}")
                             in_processing_players.remove(p_data)
                         else:
                             sock.send(b"Wrong! Try again: ")
