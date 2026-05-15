@@ -1,5 +1,6 @@
 import pygame
 
+import LPM
 import Perfect_Circle
 import ReactionGame
 import Rhythm
@@ -31,7 +32,7 @@ def get_password():
     return "321"
 
 def get_game():
-    return "reaction"
+    return "speed"
 
 def is_finished_waiting():
     return True
@@ -44,7 +45,8 @@ game_scenes = {
     "blink": blink_counter.BlinkCounterScene(screen),
     "rhythm": Rhythm.RhythmGame(screen),
     "reaction": ReactionGame.ReactionTimeGame(screen),
-    "trivia": Trivia.TriviaGame(screen)
+    "trivia": Trivia.TriviaGame(screen),
+    "speed": LPM.TypingGame(screen)
 }
 
 while running:
