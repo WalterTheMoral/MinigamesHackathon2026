@@ -181,7 +181,7 @@ class RhythmGame(Game):
         self.feedback = ""
         self.feedback_time = 0
 
-        self.GAME_TIME = 30
+        self.GAME_TIME = 5 # TODO: self.GAME_TIME = 30
 
         # result delay
         self.result_time = None
@@ -363,14 +363,7 @@ class RhythmGame(Game):
                 pygame.time.get_ticks()
                 >= self.result_time
             ):
-
-                self.return_state = (
-                    "finished",
-                    (
-                        self.score,
-                        self.max_streak
-                    )
-                )
+                self.return_state = self.score
 
                 self.result_time = None
 
