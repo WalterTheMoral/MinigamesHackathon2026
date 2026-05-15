@@ -3,6 +3,8 @@ import pygame
 import Perfect_Circle
 from Scenes import *
 import Space_bar
+import colour_detector
+import blink_counter
 
 pygame.init()
 
@@ -34,7 +36,9 @@ def is_finished_waiting():
 game_scenes = {
     "None": Scene(screen),
     "space": Space_bar.ClickSpeedTestScene(screen),
-    "circle": Perfect_Circle.PerfectCircleScene(screen)
+    "circle": Perfect_Circle.PerfectCircleScene(screen),
+    "colour": colour_detector.ColourDetectorScene(screen, "red"),
+    "blink": blink_counter.BlinkCounterScene(screen)
 }
 
 while running:
