@@ -17,16 +17,12 @@ import blink_counter
 import colour_detector
 from Scenes import *
 
-
 SERVER_HOST = "10.13.244.168"
 SERVER_PORT = 5555
 MAX_PLAYERS = 5
 REWARDS = [25, 20, 15, 10, 5]
 
-
 class InterfaceClient:
-    """Non-blocking Pygame client for the server.py text protocol."""
-
     PROMPTS = {
         "Welcome! Type 'HOST' or 'JOIN': ": "welcome",
         "Enter a password for your game: ": "host_password",
@@ -41,12 +37,10 @@ class InterfaceClient:
         self.connected = False
         self.running = False
         self.lock = threading.Lock()
-
         self.prompt_events = {
             prompt_name: threading.Event()
             for prompt_name in self.PROMPTS.values()
         }
-
         self.is_host = False
         self.player_id = None
         self.joined_count = 0
@@ -60,7 +54,6 @@ class InterfaceClient:
     def connect(self):
         if self.connected:
             return True
-
         try:
             print(f"[INTERFACE] Connecting to {self.host}:{self.port}")
             self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -120,7 +113,6 @@ class InterfaceClient:
         if not self.connected or not self.sock:
             print(f"[INTERFACE] Cannot send while disconnected: {message}")
             return False
-
         try:
             print(f"[INTERFACE -> SERVER] {message}")
             with self.lock:
@@ -205,10 +197,6 @@ class InterfaceClient:
             self._apply_leaderboard_rewards()
             self.game_state = "leaderboard"
 
-        elif message.startswith("PHASE:BUY"):
-            self.game_state = "buy_phase"
-            self._send(str(self.coins))
-
         elif message.startswith("FINAL_RESULTS:"):
             self.leaderboard_data = message.replace("FINAL_RESULTS:", "", 1).strip()
             self.game_state = "finished"
@@ -244,7 +232,7 @@ class InterfaceClient:
         for rank, entry in enumerate(entries):
             if entry.startswith(f"P{self.player_id}:") and rank < len(REWARDS):
                 self.coins += REWARDS[rank]
-                print(f"[INTERFACE] Coins after reward: {self.coins}")
+                print(f"[INTERFACE] Coins tracked locally for UI: {self.coins}")
                 return
 
     def _wait_for_prompt(self, prompt_name, timeout=2.0):
@@ -275,7 +263,6 @@ class InterfaceClient:
 
         return f"{score:g}", score_type
 
-
 pygame.init()
 
 screen = pygame.display.set_mode((1400, 800))
@@ -283,11 +270,9 @@ pygame.display.set_caption("Mario Party")
 clock = pygame.time.Clock()
 
 client = InterfaceClient()
-# activeScene = BettingScene(screen, 10, [4, 1, 2, 5])
 activeScene = Title(screen)
 last_started_round = 0
 running = True
-
 
 def make_game_scene(game_name):
     game_scenes = {
@@ -302,12 +287,10 @@ def make_game_scene(game_name):
     }
     return game_scenes.get(game_name, lambda: Scene(screen))()
 
-
 def score_value(result):
     if isinstance(result, (tuple, list)) and result:
         return result[0]
     return result
-
 
 while running:
     events = pygame.event.get()
