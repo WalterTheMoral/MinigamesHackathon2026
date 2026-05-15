@@ -3,6 +3,7 @@ import pygame
 import Perfect_Circle
 import ReactionGame
 import Rhythm
+import Trivia
 from Scenes import *
 import Space_bar
 import colour_detector
@@ -30,7 +31,7 @@ def get_password():
     return "321"
 
 def get_game():
-    return "reaction"
+    return "trivia"
 
 def is_finished_waiting():
     return True
@@ -42,7 +43,8 @@ game_scenes = {
     "colour": colour_detector.ColourDetectorScene(screen, "red"),
     "blink": blink_counter.BlinkCounterScene(screen),
     "rhythm": Rhythm.RhythmGame(screen),
-    "reaction": ReactionGame.ReactionTimeGame(screen)
+    "reaction": ReactionGame.ReactionTimeGame(screen),
+    "trivia": Trivia.TriviaGame(screen)
 }
 
 while running:
